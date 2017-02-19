@@ -84,7 +84,7 @@ namespace MagicDuel.Wizards
         public void SetTarget(Vector3 target)
         {
             target.y = 0;
-            this.movementTarget.position = target;
+            movementTarget.position = target;
         }
 
         /// <summary>
@@ -94,21 +94,6 @@ namespace MagicDuel.Wizards
         public void SetTarget(GameObject gameObject)
         {
             SetTarget(gameObject.transform.position);
-        }
-
-        protected virtual void OnCast(Spells.Spell spell)
-        {
-            // Do nothing
-        }
-
-        protected virtual void OnSpellStartEffect(Spells.Spell spell)
-        {
-            // Do nothing
-        }
-
-        protected virtual void OnSpellEndEffect(Spells.Spell spell)
-        {
-            // Do nothing
         }
 
         protected virtual Character GetCharacterToFight()
@@ -124,27 +109,9 @@ namespace MagicDuel.Wizards
             return characters[Random.Range(0, characters.Count - 1)];
         }
 
-        protected void TriggerReachDestination()
-        {
-            if (ReachDestinationEvent != null)
-            {
-                ReachDestinationEvent();
-            }
-        }
-
         public virtual Spells.Spell GetSpellToCast()
         {
-            //var spell = Spells.SpellFactory.GetSpell(Random.value < 0.5 ? "Q" : "Square");
-            var spell = Spells.SpellFactory.GetSpell("Circle"); // Missile
-            //var spell = Spells.SpellFactory.GetSpell("Square"); // Grenade
-            //var spell = Spells.SpellFactory.GetSpell("Z"); // Flamethrower
-            //var spell = Spells.SpellFactory.GetSpell("Shield"); // Shield
-            //var spell = Spells.SpellFactory.GetSpell("Wall"); // Barrier
-            //var spell = Spells.SpellFactory.GetSpell("Heal"); // Heal
-            //var spell = Spells.SpellFactory.GetSpell("Drain"); // Drain
-            //var spell = Spells.SpellFactory.GetSpell("Blind"); // Blind
-
-            return spell;
+            return null;
         }
     }
 }

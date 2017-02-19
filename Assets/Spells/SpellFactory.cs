@@ -70,9 +70,6 @@ namespace MagicDuel.Spells
             var damageWater = GetDamageValue(spellNode, "water");
             var damageLightning = GetDamageValue(spellNode, "lightning");
 
-            var svg = new Svg.SvgParser();
-            svg.Load(Resources.Load<TextAsset>("Sigils/" + name));
-
             var standardSpellProperties = new StandardSpellProperties(name, firingMethod, title, description,
                 rank, locked, unlockCost, manaCost, projectileSpeed, parentName, chargedObject, damageHealth,
                 damageMana, damageFire, damageIce, damageWater, damageLightning);
