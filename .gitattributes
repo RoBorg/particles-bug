@@ -1,0 +1,8 @@
+* binary
+
+*.cs text diff eol=crlf
+*.meta text diff eol=crlf
+*.txt text diff eol=crlf
+*.md text diff eol=crlf
+*.xml text diff eol=crlf
+*.svg text diff eol=crlf

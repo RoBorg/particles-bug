@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<spells>
+  <spell>
+    <name>Z</name>
+    <parentName>Y</parentName>
+    <rank>3</rank>
+    <locked>true</locked>
+    <title>C</title>
+    <description>A Z shape</description>
+    <unlockCost>1</unlockCost>
+    <manaCost>100</manaCost>
+    <projectileSpeed>10</projectileSpeed>
+    <firingMethod>FLAME</firingMethod>
+    <damage>
+      <health>1</health>
+    </damage>
+    <flamethrower>
+      <spreadAngle>1</spreadAngle>
+      <damagePerSecond>10</damagePerSecond>
+      <duration>500</duration>
+    </flamethrower>
+  </spell>
+</spells>
