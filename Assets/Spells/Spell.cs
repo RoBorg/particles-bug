@@ -4,16 +4,10 @@ using System.Collections.Generic;
 
 namespace MagicDuel.Spells
 {
-    public abstract class Spell : Damager
+    public abstract class Spell
     {
         public delegate void EffectAction(Spell spell);
-
-        public static event EffectAction StartEffectEvent;
-        public static event EffectAction EndEffectEvent;
-
-        public event EffectAction FireStartEvent;
-        public event EffectAction FireEndEvent;
-
+        
         public enum FiringMethod { FIRE, THROW, FLAME, NONE }
 
         /// <summary>
@@ -57,7 +51,6 @@ namespace MagicDuel.Spells
         public FiringMethod firingMethod { get; protected set; }
         public float projectileSpeed { get; protected set; }
         public GameObject chargedObject { get; protected set; }
-        public DamageAmounts damage { get; protected set; }
         public Spell parent { get; set; }
         public List<Spell> children { get; set; }
         public List<Spells.Projectiles.Projectile> projectiles { get; protected set; }
@@ -86,9 +79,6 @@ namespace MagicDuel.Spells
             parentName = standardSpellProperties.parentName;
             projectileSpeed = standardSpellProperties.projectileSpeed;
             chargedObject = standardSpellProperties.chargedObject;
-            damage = new DamageAmounts(standardSpellProperties.damageHealth, standardSpellProperties.damageMana,
-                standardSpellProperties.damageFire, standardSpellProperties.damageIce, standardSpellProperties.damageWater,
-                standardSpellProperties.damageLightning);
 
             children = new List<Spell>();
             projectiles = new List<Spells.Projectiles.Projectile>();
@@ -116,15 +106,6 @@ namespace MagicDuel.Spells
             // Store who is casting the spell, so that damage can be attributed later
             this.caster = caster;
 
-            // Raise the event to say that firing has started
-            RaiseFireStart();
-
-            // If it's not a continuous-fire spell (flamethrower, grenade), stop firing
-            if ((firingMethod != FiringMethod.FLAME) && (firingMethod != FiringMethod.THROW))
-            {
-                RaiseFireEnd();
-            }
-
             // ToDo: add RemoveCharge to Weapon
             // Destroy the charge object
             GameObject.Destroy(chargedObjectInstance);
@@ -140,15 +121,6 @@ namespace MagicDuel.Spells
         }
 
         /// <summary>
-        /// Call when the trigger is released - stop firing the flamethrower
-        /// or release the grenade
-        /// </summary>
-        public void Release()
-        {
-            RaiseFireEnd();
-        }
-
-        /// <summary>
         /// Calculate the force needed to throw a projectile to the given target position
         /// </summary>
         /// <param name="start"></param>
@@ -158,123 +130,7 @@ namespace MagicDuel.Spells
         /// <returns></returns>
         public virtual Vector3 GetFiringForce(Vector3 start, Vector3 target, float speed, bool direct = true)
         {
-            var force = Ballistics.GetForce(start, target, speed, direct);
-
-            if (force == null)
-            {
-                // Fire at 45 degrees
-                var direction = target - start;
-                direction.y = 0;
-                direction.Normalize();
-                direction.y = 1;
-                direction.Normalize();
-
-                return direction * speed;
-            }
-
-            return (Vector3)force;
-        }
-
-        /// <summary>
-        /// Raise the event to indicate that 
-        /// </summary>
-        protected void RaiseStartEffect()
-        {
-            if (StartEffectEvent != null)
-            {
-                StartEffectEvent(this);
-            }
-        }
-
-        /// <summary>
-        /// TODO
-        /// </summary>
-        protected void RaiseEndEffect()
-        {
-            if (EndEffectEvent != null)
-            {
-                EndEffectEvent(this);
-            }
-        }
-
-        /// <summary>
-        /// Raise the event to say that firing has started, i.e. the trigger has been
-        /// pressed
-        /// </summary>
-        protected void RaiseFireStart()
-        {
-            if (FireStartEvent != null)
-            {
-                FireStartEvent(this);
-            }
-        }
-
-        /// <summary>
-        /// Raise the event to say that firing has stopped, i.e. the trigger has been
-        /// released
-        /// </summary>
-        protected void RaiseFireEnd()
-        {
-            if (FireEndEvent != null)
-            {
-                FireEndEvent(this);
-            }
-        }
-
-        /// <summary>
-        /// TODO
-        /// </summary>
-        /// <param name="damageSourcePosition">The point in world space from which damage should be applied</param>
-        public void DoDamage(Vector3 damageSourcePosition)
-        {
-            Damage.RaiseDamage(this, damageSourcePosition);
-        }
-
-        /// <summary>
-        /// From the Damager interface
-        /// Get the character causing the damager
-        /// </summary>
-        /// <returns>Returns the character that cast the spell</returns>
-        public Character GetCaster()
-        {
-            return caster;
-        }
-
-        /// <summary>
-        /// TODO
-        /// </summary>
-        /// <param name="damageSourcePosition"></param>
-        /// <param name="damageable"></param>
-        /// <returns></returns>
-        public DamageAmounts GetBaseDamage(Vector3 damageSourcePosition, Damageable damageable)
-        {
-            var splashRadius = 1; // TODO
-            var distance = Damage.GetDistance(damageSourcePosition, damageable.GetCollider());
-            var distanceMultiplier = 0f;
-            var normalizedDistance = distance / splashRadius;
-            var baseDamage = new DamageAmounts();
-
-            if (distance > splashRadius)
-            {
-                return baseDamage;
-            }
-
-            foreach (var damageType in (DamageTypes[])System.Enum.GetValues(typeof(DamageTypes)))
-            {
-
-                if (damageType == DamageTypes.Mana)
-                {
-                    distanceMultiplier = (splashRadius - distance) / splashRadius;
-                }
-                else
-                {
-                    distanceMultiplier = 3 - (2 * Mathf.Exp((normalizedDistance * normalizedDistance) / Mathf.Sqrt(2 * Mathf.PI)));
-                }
-
-                baseDamage.Set(damageType, damage.Get(damageType) * distanceMultiplier);
-            }
-
-            return baseDamage;
+            return Vector3.forward;
         }
     }
 }

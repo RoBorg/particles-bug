@@ -80,12 +80,10 @@ namespace MagicDuel.Spells
         {
             Object.Destroy(flame.gameObject);
             isCasting = false;
-            RaiseFireEnd();
         }
 
         private void OnBurn(Projectiles.Projectile projectile, Collision collision, bool hasCollidedBefore)
         {
-            DoDamage(projectile.transform.position);
             Object.Destroy(projectile.gameObject);
         }
 
