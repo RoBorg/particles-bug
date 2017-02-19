@@ -107,102 +107,6 @@ namespace MagicDuel
         }
 
         /// <summary>
-        /// Callback for when the controller trigger is pressed
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        protected virtual void OnTriggerPressed(object sender)
-        {
-            switch (state)
-            {
-                case State.Idle:
-                    state = State.Drawing;
-                    break;
-
-                case State.Charged:
-                    FireSpell();
-                    break;
-            }
-        }
-
-        /// <summary>
-        /// Callback for when the controller trigger is released
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        protected virtual void OnTriggerReleased(object sender)
-        {
-            if (state == State.Drawing)
-            {
-                RecogniseSigil();
-            }
-            else if (state == State.Throwing)
-            {
-                currentSpell.Release();
-
-                state = State.Idle;
-            }
-        }
-
-        /// <summary>
-        /// When a sigil has been drawn, figure out which spell it represents and fire/make ready that spell
-        /// </summary>
-        protected void RecogniseSigil()
-        {
-            // The minimum number of points a sigil must have to count as being drawn
-            var minSigilPoints = 10;
-
-            if (sigilPoints.Count >= minSigilPoints)
-            {
-                // Map the points onto a plane by taking the average direction the controller was pointing in
-                // while the sigil was being drawn
-                var pointsToPlane = new PointsToPlane();
-                var averageDirection = new Vector3();
-
-                foreach (var pointDirection in sigilPointDirections)
-                    averageDirection += pointDirection;
-
-                averageDirection.Normalize();
-
-                var plane = new Plane(averageDirection, 0);
-                var pointsOnPlane = pointsToPlane.GetPointsOnPlane(sigilPoints.ToArray(), plane);
-                var size = VectorUtils.GetBounds(pointsOnPlane).size;
-
-                // Scale the trimming distance based on the size of the drawn sigil
-                var recogniser = new Sigils.Recogniser(0.25f, Mathf.Max(size.x, size.y, size.z) / 5f);
-                var featuresHash = recogniser.run(pointsOnPlane);
-                var spellsLibrary = new Spells.Library();
-                spellsLibrary.Load();
-                var spell = spellsLibrary.GetByHash(featuresHash);
-
-                // ToDo: put this back!!!
-                // if ((spell != null) && !spell.locked)
-                if (spell != null)
-                {
-                    state = State.Charged;
-                    currentSpell = Spells.SpellFactory.GetSpell(spell.name);
-                    currentSpell.Charge(this);
-                    currentSpell.FireStartEvent += RaiseFireStart;
-                    currentSpell.FireEndEvent += RaiseFireEnd;
-
-                    // Replace the sigil with a nicer looking one
-                    DrawSigil(sigilPoints.ToArray(), pointsOnPlane, averageDirection);
-                }
-                else
-                {
-                    state = State.Idle;
-                }
-            }
-            else
-            {
-                state = State.Idle;
-            }
-
-            ClearSigilPoints();
-            ClearTrail();
-        }
-
-        /// <summary>
         /// Called every frame
         /// </summary>
         protected virtual void Update()
@@ -312,25 +216,14 @@ namespace MagicDuel
         /// <param name="normal">The normal to the mapped plane</param>
         protected void DrawSigil(Vector3[] points, Vector2[] pointsOnPlane, Vector3 normal)
         {
-            var sigil = currentSpell.sigil;
             var center = VectorUtils.GetBounds(points).center;
             var size = VectorUtils.GetBounds(pointsOnPlane).size;
-            var scale = Mathf.Max(size.x, size.y);
 
             var container = new GameObject("Replaced Sigil");
             var rotation = new Quaternion();
             rotation.SetLookRotation(normal);
             container.transform.position = center;
             container.transform.rotation = rotation;
-
-            foreach (var point in sigil.GetPoints())
-            {
-                var sigilPoint = Instantiate(trailObject, container.transform);
-                sigilPoint.transform.localRotation = Quaternion.identity;
-                sigilPoint.transform.localPosition = new Vector3(point.x, point.y, 0) * scale;
-            }
-
-            StartCoroutine(DestroySigil(container, 1f));
         }
 
         /// <summary>

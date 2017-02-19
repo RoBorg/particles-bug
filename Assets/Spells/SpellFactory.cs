@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Assertions;
 using System.Xml;
-using MagicDuel.Sigils;
 using System.Collections.Generic;
 
 namespace MagicDuel.Spells
@@ -49,7 +48,6 @@ namespace MagicDuel.Spells
             }
         }
 
-        private static Recogniser recogniser = new Recogniser();
         private static Dictionary<string, SpellInstanceFactory> spellFactories = new Dictionary<string, SpellInstanceFactory>();
 
         public static Spell Create(XmlNode spellNode)
@@ -75,9 +73,7 @@ namespace MagicDuel.Spells
             var svg = new Svg.SvgParser();
             svg.Load(Resources.Load<TextAsset>("Sigils/" + name));
 
-            var sigil = new Sigil(recogniser, svg);
-
-            var standardSpellProperties = new StandardSpellProperties(name, sigil, firingMethod, title, description,
+            var standardSpellProperties = new StandardSpellProperties(name, firingMethod, title, description,
                 rank, locked, unlockCost, manaCost, projectileSpeed, parentName, chargedObject, damageHealth,
                 damageMana, damageFire, damageIce, damageWater, damageLightning);
 

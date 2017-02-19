@@ -58,14 +58,6 @@ namespace MagicDuel.Spells
          */
         public Spell GetByHash(string featuresHash)
         {
-            foreach (var spell in spells)
-            {
-                if (spell.sigil.featuresHash == featuresHash)
-                {
-                    return spell;
-                }
-            }
-
             return null;
         }
 

@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEngine.Assertions;
-using MagicDuel.Sigils;
 using System.Collections.Generic;
 
 namespace MagicDuel.Spells
@@ -53,11 +52,6 @@ namespace MagicDuel.Spells
         public int manaCost { get; protected set; }
 
         /// <summary>
-        /// The sigil drawn to cast the spell
-        /// </summary>
-        public Sigil sigil { get; protected set; }
-
-        /// <summary>
         /// 
         /// </summary>
         public FiringMethod firingMethod { get; protected set; }
@@ -83,7 +77,6 @@ namespace MagicDuel.Spells
         public Spell(StandardSpellProperties standardSpellProperties)
         {
             name = standardSpellProperties.name;
-            sigil = standardSpellProperties.sigil;
             firingMethod = standardSpellProperties.firingMethod;
             title = standardSpellProperties.title;
             description = standardSpellProperties.description;

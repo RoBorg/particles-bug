@@ -93,17 +93,5 @@ namespace MagicDuel
 
             Destroy(gameObject);
         }
-
-        public static void Features(MagicDuel.Sigils.Feature[] features)
-        {
-            var str = "";
-
-            foreach (var feature in features)
-            {
-                str += ((str == "") ? "" : ", ") + feature.ToString();
-            }
-
-            Debug.Log(str);
-        }
     }
 }
