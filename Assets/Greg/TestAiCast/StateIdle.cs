@@ -6,7 +6,7 @@ namespace MagicDuel.TestAi
     {
         private static int counter = 0;
 
-        private void Update()
+        protected override void Update()
         {
             counter++;
 

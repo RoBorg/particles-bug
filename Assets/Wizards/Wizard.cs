@@ -25,7 +25,6 @@ namespace MagicDuel.Wizards
 
         private UnityEngine.AI.NavMeshAgent agent;
         private Cover[] covers;
-        private Locomotion locomotion = null;
         public Character enemy { get; protected set; }
         public Weapon weapon { get; protected set; }
 
@@ -48,7 +47,6 @@ namespace MagicDuel.Wizards
             var animator = GetComponent<Animator>();
             Assert.IsNotNull(animator, "Animator not found");
 
-            locomotion = new Locomotion(animator);
             agent.updatePosition = false;
 
             stateMachine = CreateStateMachine();
