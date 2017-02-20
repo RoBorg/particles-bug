@@ -39,7 +39,7 @@ namespace MagicDuel.Spells
             flame.transform.localRotation = Quaternion.identity;
 
             isCasting = true;
-            flame.StartCoroutine(EmitDamageProbes(weapon, EndFiring));
+            flame.StartCoroutine(EmitDamageProbes(weapon));
         }
 
         public override bool IsCasting()
@@ -47,12 +47,15 @@ namespace MagicDuel.Spells
             return isCasting;
         }
 
-        private IEnumerator EmitDamageProbes(Weapon weapon, System.Action callback)
+        private IEnumerator EmitDamageProbes(Weapon weapon)
         {
-            var startTime = Time.time;
-
-            while (Time.time < startTime + duration)
+            while (true)
             {
+                yield return new WaitForSeconds(0.1f);
+
+                // Make sure we run after LateUpdate or the IK will break stuff!
+                yield return new WaitForEndOfFrame();
+
                 var probe = Object.Instantiate(flameDamageProbeObject);
                 probe.transform.position = weapon.weaponTip.transform.position;
                 probe.transform.rotation = weapon.transform.rotation;
@@ -65,21 +68,7 @@ namespace MagicDuel.Spells
 
                 probe.CollisionEvent += OnBurn;
                 probe.EndOfLifetimeEvent += OnEndOfProbeLifetime;
-
-                // ToDo: right delay
-                yield return new WaitForSeconds(0.1f);
-
-                // Make sure we run after LateUpdate or the IK will break stuff!
-                yield return new WaitForEndOfFrame();
             }
-
-            callback();
-        }
-
-        private void EndFiring()
-        {
-            Object.Destroy(flame.gameObject);
-            isCasting = false;
         }
 
         private void OnBurn(Projectiles.Projectile projectile, Collision collision, bool hasCollidedBefore)
